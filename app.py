@@ -9,7 +9,6 @@ from agents import (
     write_cover_letter,
     analyze_skill_gap,
     match_jd,
-    generate_interview_prep,
     search_jobs_adzuna,
     rank_and_summarize_jobs,
 )
@@ -250,7 +249,6 @@ with st.sidebar:
     run_cover     = st.checkbox("Cover Letter",      value=True)
     run_skill     = st.checkbox("Skill Gap",         value=True)
     run_jd        = st.checkbox("JD Match",          value=True)
-    run_interview = st.checkbox("Interview Prep",    value=True)
 
     st.markdown("---")
     run_btn = st.button("🚀 Run Agents", use_container_width=True, type="primary")
@@ -268,14 +266,13 @@ st.markdown('<div class="main-header">💼 Career Agent Suite</div>', unsafe_all
 st.markdown('<div class="sub-header">Multi-agent job search assistant · Groq + LLaMA 3.3 70B · Live jobs via Adzuna</div>', unsafe_allow_html=True)
 
 # Agent overview cards (always visible)
-cols = st.columns(6)
+cols = st.columns(5)
 agents_meta = [
     ("🔎", "Job Search",        "Live listings"),
     ("📝", "Resume Analyst",    "Scores & feedback"),
     ("✉️", "Cover Letter",      "Personalized draft"),
     ("📊", "Skill Gap",         "What to learn next"),
     ("🎯", "JD Matcher",        "Keyword alignment"),
-    ("🎤", "Interview Coach",   "Q&A prep"),
 ]
 for col, (icon, name, desc) in zip(cols, agents_meta):
     with col:
@@ -329,7 +326,6 @@ if run_btn:
     if run_cover:     selected_agents.append("cover")
     if run_skill:     selected_agents.append("skill")
     if run_jd:        selected_agents.append("jd")
-    if run_interview: selected_agents.append("interview")
 
     progress = st.progress(0, text="Starting agents...")
     total = len(selected_agents)
@@ -350,7 +346,6 @@ if run_btn:
         "cover":     lambda: write_cover_letter(client, resume_text, target_role, job_description),
         "skill":     lambda: analyze_skill_gap(client, resume_text, target_role, job_description),
         "jd":        lambda: match_jd(client, resume_text, target_role, job_description),
-        "interview": lambda: generate_interview_prep(client, resume_text, target_role, job_description),
     }
     agent_names = {
         "jobsearch": "Job Search Agent",
@@ -358,7 +353,6 @@ if run_btn:
         "cover":  "Cover Letter Writer",
         "skill":  "Skill Gap Agent",
         "jd":     "JD Matcher",
-        "interview": "Interview Coach",
     }
 
     for i, agent_id in enumerate(selected_agents):
@@ -397,7 +391,6 @@ else:
     if "cover"     in results: tab_labels.append("✉️ Cover Letter");    tab_ids.append("cover")
     if "skill"     in results: tab_labels.append("📊 Skill Gap");        tab_ids.append("skill")
     if "jd"        in results: tab_labels.append("🎯 JD Match");         tab_ids.append("jd")
-    if "interview" in results: tab_labels.append("🎤 Interview Prep");   tab_ids.append("interview")
 
     tabs = st.tabs(tab_labels)
 
@@ -493,11 +486,5 @@ else:
                 </div>""", unsafe_allow_html=True)
                 st.markdown(content)
 
-            # ── Interview tab ────────────────────────────────────────────────
-            elif tab_id == "interview":
-                st.markdown(content)
-                st.markdown("---")
-                st.info("💡 **Tip:** Practice each answer out loud. Record yourself and watch it back.")
-
 st.markdown("---")
-st.caption("Built with Streamlit, Groq (LLaMA 3.3 70B), and Adzuna · A multi-agent job search assistant · ")
+st.caption("Built with Streamlit, Groq, and Adzuna · A multi-agent job search assistant · ")
